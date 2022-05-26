@@ -4,17 +4,20 @@ public class ConsoleProgress implements Runnable {
 
     @Override
     public void run() {
-        char[] process = new char[]{'\'', '|', '/'};
-        for (int index = 0; !Thread.currentThread().isInterrupted(); index++) {
-            System.out.print("\rLoading ...|" + process[index]);
-            if (index == process.length - 1) {
-                index = 0;
-            }
+        int index = 0;
+        char[] process = new char[]{
+                '\\', '/', '|'
+        };
+        while (!Thread.currentThread().isInterrupted()) {
+            System.out.print("\rLoading ..." + process[index++]);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 }
+            if (index == process.length) {
+                index = 0;
+               }
              }
           }
 
