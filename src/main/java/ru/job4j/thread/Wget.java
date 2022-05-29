@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 
 public class Wget implements Runnable {
     private final String url;
@@ -18,17 +19,22 @@ public class Wget implements Runnable {
 
     @Override
     public void run() {
-        /* Задержка, исходя из скорости  в КБайт/сек*/
-        int delay = (1024 / 1000) / this.speed;
+        /* Задержка, исходя из скорости  в МБайт/сек*/
+        int delay;
         int downloadData = 0;
+        Date date = new Date();
         try (BufferedInputStream in = new BufferedInputStream(new URL(this.url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(this.fileName)) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
-                if (delay >= 1) {
-                    Thread.sleep(delay);
+                downloadData += bytesRead;
+                if (downloadData >= ((this.speed * 1048576) / 1024)) {
+                    Date dateDelay = new Date();
+                    delay = (int) (dateDelay.getTime() - date.getTime());
+                    Thread.sleep(delay < 1000 ? 1000 - delay : delay);
+                    downloadData = 0;
                 }
             }
         } catch (IOException | InterruptedException e) {
