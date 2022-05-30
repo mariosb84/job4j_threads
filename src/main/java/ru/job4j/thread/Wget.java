@@ -8,10 +8,10 @@ import java.util.Date;
 
 public class Wget implements Runnable {
     private final String url;
-    private final int speed;
+    private final float speed;
     private final String fileName;
 
-    public Wget(String url, int speed, String fileName) {
+    public Wget(String url, float speed, String fileName) {
         this.url = url;
         this.speed = speed;
         this.fileName = fileName;
@@ -20,19 +20,19 @@ public class Wget implements Runnable {
     @Override
     public void run() {
         /* Задержка, исходя из скорости  в МБайт/сек*/
-        int delay;
-        int downloadData = 0;
-        Date date = new Date();
+        long delay;
+        long downloadData = 0;
         try (BufferedInputStream in = new BufferedInputStream(new URL(this.url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(this.fileName)) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+                Date date = new Date();
                 downloadData += bytesRead;
-                if (downloadData >= ((this.speed * 1048576) / 1024)) {
+                if (downloadData >= ((this.speed * 1048576L))) {
                     Date dateDelay = new Date();
-                    delay = (int) (dateDelay.getTime() - date.getTime());
+                    delay = (dateDelay.getTime() - date.getTime());
                     Thread.sleep(delay < 1000 ? 1000 - delay : delay);
                     downloadData = 0;
                 }
@@ -48,7 +48,7 @@ public class Wget implements Runnable {
                     "url is null, speed is null, fileName is null.");
         }
         String url = args[0];
-        int speed = Integer.parseInt(args[1]);
+        float speed = Float.parseFloat(args[1]);
         String fileName = args[2];
         Thread wget = new Thread(new Wget(url, speed, fileName));
         wget.start();
