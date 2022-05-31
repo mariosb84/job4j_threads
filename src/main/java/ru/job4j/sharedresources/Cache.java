@@ -1,4 +1,4 @@
-package ru.job4j;
+package ru.job4j.sharedresources;
 
 public final class Cache {
 
