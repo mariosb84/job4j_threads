@@ -24,7 +24,7 @@ public class UserCache {
 
     public List<User> findAll() {
         /*return new ArrayList<>(users.values());*/
-        /*Ухдим от использовани "users.values()" напрямую,
+        /*Уходим от использовани "users.values()" напрямую,
         так как она позволяет вносить изменения в обоих направлениях
         **/
         return users.values().stream().
