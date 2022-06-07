@@ -13,19 +13,19 @@ public final class ParseFile implements Content {
 
     @Override
     public String getContent(Predicate<Character> filter) {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         try (BufferedInputStream in =
                      new BufferedInputStream(new FileInputStream(file))) {
             int data;
-            while ((data = in.read()) > 0) {
+            while ((data = in.read()) != -1) {
                 if (filter.test((char) 0x80)) {
-                    output += (char) data;
+                    output.append((char) data);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return output;
+        return output.toString();
     }
 
 }
