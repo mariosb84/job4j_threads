@@ -1,5 +1,6 @@
 package ru.job4j.resourcesynchronization;
 
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import java.util.ArrayList;
@@ -8,11 +9,11 @@ import java.util.Optional;
 
 @ThreadSafe
 public class UserStorage {
-
+    @GuardedBy("this")
     private final List<User> userStorages = new ArrayList<>();
 
 
-    public boolean add(User user) {
+    public synchronized boolean add(User user) {
         if (findById(user.getId()).isEmpty()) {
             userStorages.add(user);
             return true;
@@ -20,28 +21,30 @@ public class UserStorage {
         return false;
     }
 
-    public boolean update(User user) {
+    public synchronized boolean update(User user, int id, int amount) {
         if (findById(user.getId()).isPresent()) {
-            userStorages.set(user.getId(), user);
+            User userUpdate = findById(user.getId()).get();
+            userUpdate.setId(id);
+            userUpdate.setAmount(amount);
             return true;
         }
         return false;
     }
 
-    public boolean delete(User user) {
+    public synchronized boolean delete(User user) {
         if (findById(user.getId()).isPresent()) {
-            userStorages.remove(user.getId());
+            userStorages.remove(user);
             return true;
         }
         return false;
     }
 
-    public boolean transfer(int fromId, int toId, int amount) {
-        User userFrom = userStorages.get(findById(fromId).
-             get().getId());
-        User userTo = userStorages.get(findById(toId).
-             get().getId());
-     if (userFrom.getAmount() >= userTo.getAmount()) {
+    public synchronized boolean transfer(int fromId, int toId, int amount) {
+        User userFrom = findById(fromId).orElse(null);
+        User userTo = findById(toId).orElse(null);
+        assert userFrom != null;
+        assert userTo != null;
+        if (userFrom.getAmount() >= userTo.getAmount()) {
          userFrom.setAmount(userFrom.getAmount() - amount);
          userTo.setAmount(userTo.getAmount() + amount);
          return true;
@@ -49,25 +52,40 @@ public class UserStorage {
      return false;
     }
 
-    private Optional<User> findById(int id) {
+    private synchronized Optional<User> findById(int id) {
         return userStorages
                 .stream()
                 .filter(u -> u.getId() == (id))
                 .findFirst();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         UserStorage storage = new UserStorage();
-
-        System.out.println(storage.add(new User(1, 100)));
-        System.out.println(storage.add(new User(2, 200)));
-        System.out.println(storage.userStorages.get(0).getAmount());
-        System.out.println(storage.userStorages.get(1).getAmount());
-        System.out.println();
-        System.out.println(storage.transfer(1, 2, 50));
-        System.out.println();
-        System.out.println(storage.userStorages.get(0).getAmount());
-        System.out.println(storage.userStorages.get(1).getAmount());
+        Thread first = new Thread(
+                () -> {
+                    try {
+                        Thread.sleep(1000);
+                        System.out.println(storage.add(new User(1, 100)));
+                        System.out.println(storage.add(new User(2, 200)));
+                        System.out.println();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+        Thread second = new Thread(
+                () -> {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(storage.transfer(2, 1, 50));
+                    System.out.println();
+                });
+        first.start();
+        second.start();
+        first.join();
+        second.join();
     }
 
 }
