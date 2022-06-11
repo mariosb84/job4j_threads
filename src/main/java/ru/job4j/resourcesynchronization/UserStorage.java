@@ -10,15 +10,16 @@ public class UserStorage {
     private final Map<Integer, User> userStorages = new HashMap<>();
 
     public synchronized boolean add(User user) {
-        return userStorages.putIfAbsent(user.getId(), user) != null;
+        return userStorages.putIfAbsent(user.getId(), user) == null;
     }
 
     public synchronized boolean update(User user) {
-        return userStorages.replace(user.getId(), user) != null;
+        return userStorages.replace(user.getId(),
+                userStorages.get(user.getId()), user);
     }
 
     public synchronized boolean delete(User user) {
-        return userStorages.remove(user.getId()) != null;
+        return userStorages.remove(user.getId(), user);
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
