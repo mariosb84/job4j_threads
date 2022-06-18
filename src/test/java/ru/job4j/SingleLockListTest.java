@@ -3,6 +3,7 @@ package ru.job4j;
 import org.junit.Test;
 import ru.job4j.resourcesynchronization.SingleLockList;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,7 +14,8 @@ public class SingleLockListTest {
 
     @Test
     public void add() throws InterruptedException {
-        SingleLockList<Integer> list = new SingleLockList<>();
+        ArrayList<Integer> listInt = new ArrayList<>();
+        SingleLockList<Integer> list = new SingleLockList<>(listInt);
         Thread first = new Thread(() -> list.add(1));
         Thread second = new Thread(() -> list.add(2));
         first.start();
