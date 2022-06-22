@@ -72,31 +72,51 @@ public class SimpleBlockingQueueTest {
         );
         Thread second = new Thread(
                 () -> {
-                    simpleBlockingQueue.poll();
+                    try {
+                        simpleBlockingQueue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    simpleBlockingQueue.poll();
+                    try {
+                        simpleBlockingQueue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    simpleBlockingQueue.poll();
+                    try {
+                        simpleBlockingQueue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    simpleBlockingQueue.poll();
+                    try {
+                        simpleBlockingQueue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    simpleBlockingQueue.poll();
+                    try {
+                        simpleBlockingQueue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
