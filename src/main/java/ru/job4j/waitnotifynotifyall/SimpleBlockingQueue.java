@@ -23,8 +23,8 @@ public class SimpleBlockingQueue<T> {
             while (this.queue.size() == this.limit) {
                 monitor.wait();
             }
-            monitor.notifyAll();
             queue.add(value);
+            monitor.notifyAll();
     }
 
     public synchronized T poll() throws InterruptedException {
