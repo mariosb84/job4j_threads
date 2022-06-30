@@ -21,11 +21,7 @@ public class CASCount {
     }
 
     public int get() {
-        var current = this.count.get();
-            if (current == null) {
-                throw new UnsupportedOperationException("Count is not impl.");
-            }
-        return current;
+        return this.count.get();
     }
 
 }
