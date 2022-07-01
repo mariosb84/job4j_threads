@@ -8,11 +8,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CacheTest {
-
+    Cache cache = new Cache();
     Base base = new Base(1, 1);
     Base base2 = new Base(2, 1);
     Base base3 = new Base(3, 1);
-    Cache cache = new Cache();
 
     @Test
     public void whenAdd() {
@@ -25,12 +24,11 @@ public class CacheTest {
         cache.delete(base2);
         assertThat(cache.add(base2), is(true));
     }
-    /*
+
     @Test
     public void whenUpdated() {
         cache.add(base3);
-        cache.update(base3);
-        assertThat(base3.getVersion(), is(2));
-    }*/
+        assertThat(cache.update(base3), is(true));
+    }
 
 }
